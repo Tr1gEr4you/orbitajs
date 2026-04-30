@@ -1,7 +1,7 @@
-import { IRequest } from "../request/request.interface";
-import { IResponse } from "../response/response.interface";
-import { Url } from "../router/router.interface";
-import { IMiddleware } from "./middlewareRegistry.interface";
+import { IRequest } from '../request/request.interface';
+import { IResponse } from '../response/response.interface';
+import { Url } from '../router/router.interface';
+import { IMiddleware } from './middlewareRegistry.interface';
 
 export class MiddlewareRegistry {
     private readonly middlewares: Map<Url, IMiddleware[]> = new Map();
@@ -27,7 +27,13 @@ export class MiddlewareRegistry {
     public async runPipeline(req: IRequest, res: IResponse): Promise<boolean> {
         const { url } = req;
         if (!url) return false;
-
+        const globalMiddlewares = this.middlewares.get('*');
+        if (globalMiddlewares) {
+            for (const middleware of globalMiddlewares) {
+                await middleware.handler(req, res);
+                if (res.headersSent) return false;
+            }
+        }
         const middlewares = this.middlewares.get(url);
         if (middlewares) {
             for (const middleware of middlewares) {
