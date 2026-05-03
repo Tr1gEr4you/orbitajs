@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "strict": true,
+        "composite": true,
+        "baseUrl": ".",
+        "rootDir": "./lib",
+        "outDir": "./dist",
+        "declaration": true,
+        "declarationMap": true,
+    },
+    "include": ["lib"],
+    "exclude": ["node_modules"]
+}

@@ -1,0 +1,12 @@
+{
+    "name": "@orbita-js/core",
+    "version": "0.0.1",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "scripts": {
+        "build": "tsc"
+    },
+    "peerDependencies": {
+        "@orbita-js/common": "0.0.1"
+    }
+}

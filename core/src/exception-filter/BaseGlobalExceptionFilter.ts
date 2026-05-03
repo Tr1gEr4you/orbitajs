@@ -1,0 +1,20 @@
+import { ExceptionFilter, Request, Response, HttpError, HttpMessages, HttpStatus } from "@orbita-js/common";
+
+export class BaseGlobalExceptionFilter implements ExceptionFilter {
+    catch(exception: any, req: Request, res: Response): Promise<void> | void {
+        const statusCode = exception.status || HttpStatus.INTERNAL_SERVER_ERROR;
+        const message = exception.message;
+
+        if (HttpError.is(exception)) {
+            return res.status(statusCode).json({
+                statusCode,
+                message,
+            });
+        }
+
+        res.status(statusCode).json({
+            statusCode,
+            message: HttpMessages.INTERNAL_SERVER_ERROR,
+        });
+    }
+}

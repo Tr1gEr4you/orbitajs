@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "strict": true,
+        "composite": true,
+        "target": "ES2022",
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
+        "baseUrl": ".",
+        "outDir": "./dist",
+        "rootDir": "./src",
+        "declaration": true,
+        "declarationMap": true,
+    },
+    "references": [
+        {"path": "../common"}
+    ],
+    "include": ["src"],
+    "exclude": ["node_modules"]
+}

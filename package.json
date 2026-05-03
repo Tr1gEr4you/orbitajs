@@ -1,12 +1,13 @@
 {
-    "name": "@tr1ger4you/orbitajs",
-    "version": "0.0.1",
-    "description": "",
-    "main": "index.js",
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
-    "type": "commonjs",
+    "name": "orbita-js",
+    "workspaces": [
+        "core",
+        "common",
+        "example"
+    ],
+    "scripts": {
+        "build": "tsc --build tsconfig.build.json"
+    },
     "devDependencies": {
         "@types/node": "^25.6.0"
     }

@@ -1,14 +1,9 @@
 {
     "compilerOptions": {
-        "strict": true,
-        "target": "ES2022",
-        "lib": ["ES2022"],
-        "module": "NodeNext",
-        "moduleResolution": "NodeNext",
-        "rootDir": "./src",
-        "outDir": "./dist",
-        "esModuleInterop": true,
+        "baseUrl": ".",
+        "paths": {
+            "@orbita-js/common": ["common/lib/index.ts"],
+            "@orbita-js/core": ["core/src/index.ts"],
+        },
     },
-    "include": ["src/**/*"],
-    "exclude": ["node_modules", "dist"],
 }
