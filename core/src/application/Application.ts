@@ -1,4 +1,4 @@
-import { ExceptionFilter, Interceptor, Route, Middleware } from "@orbita-js/common";
+import { ExceptionFilter, Interceptor, Route, Middleware } from "@orbitajs/common";
 import * as http from "http";
 
 import { Request } from '../request/Request'

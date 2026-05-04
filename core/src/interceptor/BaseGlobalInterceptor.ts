@@ -1,4 +1,4 @@
-import { Request, Response, Interceptor } from "@orbita-js/common";
+import { Request, Response, Interceptor } from "@orbitajs/common";
 
 export class BaseGlobalInterceptor implements Interceptor {
     intercept(result: any, req: Request, res: Response): Promise<void> | void {

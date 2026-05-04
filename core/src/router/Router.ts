@@ -1,4 +1,4 @@
-import { Request, Response, Route, RouteWithoutMethod, RouteWithoutUrl, NotFoundError } from "@orbita-js/common"
+import { Request, Response, Route, RouteWithoutMethod, RouteWithoutUrl, NotFoundError } from "@orbitajs/common"
 
 export class Router {
     private readonly routes: Map<string, RouteWithoutUrl[]> = new Map();

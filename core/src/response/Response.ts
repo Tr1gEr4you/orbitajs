@@ -1,5 +1,5 @@
 import { ServerResponse } from "http";
-import { Request, Response as ResponseCommon } from "@orbita-js/common";
+import { Request, Response as ResponseCommon } from "@orbitajs/common";
 
 export class Response extends ServerResponse<Request> implements ResponseCommon {
     public json(data: any): void {

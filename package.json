@@ -1,5 +1,5 @@
 {
-    "name": "orbita-js",
+    "name": "orbitajs",
     "workspaces": [
         "core",
         "common",

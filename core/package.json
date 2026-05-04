@@ -1,12 +1,17 @@
 {
-    "name": "@orbita-js/core",
-    "version": "0.0.1",
+    "name": "@orbitajs/core",
+    "version": "0.1.1",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
+    "files": ["dist"],
+    "license": "MIT",
+    "publishConfig": {
+        "access": "public"
+    },
     "scripts": {
         "build": "tsc"
     },
-    "peerDependencies": {
-        "@orbita-js/common": "0.0.1"
+    "devDependencies": {
+        "@orbitajs/common": "0.0.1"
     }
 }

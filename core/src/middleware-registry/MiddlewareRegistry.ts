@@ -1,10 +1,24 @@
-import { Request, Response, Middleware, MiddlewareWithoutUrl } from "@orbita-js/common"
+import { Request, Response, Middleware, MiddlewareWithoutUrl } from "@orbitajs/common"
 
 export class MiddlewareRegistry {
     private readonly middleware: Map<string, MiddlewareWithoutUrl[]> = new Map();
 
     public getMiddlewares(url: string) {
-        return this.middleware.get(url);
+        const result: MiddlewareWithoutUrl[] = [];
+
+        const middlewares = this.middleware.get(url)
+        if (middlewares) {
+            result.push(...middlewares)
+        }
+
+        this.middleware.forEach((middleware, pattern) => {
+            if (!pattern.endsWith("/*")) return
+            if (url.startsWith(pattern.slice(0, -2))) {
+                result.push(...middleware)
+            }
+        })
+
+        return result
     }
 
     public async runPipeline(req: Request, res: Response) {

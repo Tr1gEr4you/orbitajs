@@ -1,5 +1,5 @@
-import { bodyParser } from '@orbita-js/common'
-import { Application } from '@orbita-js/core'
+import { bodyParser } from '@orbitajs/common'
+import { Application } from '@orbitajs/core'
 import { userRouter } from './user'
 
 const app = new Application()

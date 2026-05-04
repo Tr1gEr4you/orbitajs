@@ -1,4 +1,4 @@
-import { ExceptionFilter, Request, Response, HttpError, HttpMessages, HttpStatus } from "@orbita-js/common";
+import { ExceptionFilter, Request, Response, HttpError, HttpMessages, HttpStatus } from "@orbitajs/common";
 
 export class BaseGlobalExceptionFilter implements ExceptionFilter {
     catch(exception: any, req: Request, res: Response): Promise<void> | void {

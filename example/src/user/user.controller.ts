@@ -1,4 +1,4 @@
-import { Request, Response } from "@orbita-js/common";
+import { Request, Response } from "@orbitajs/common";
 import { UserService } from "./user.service";
 
 export class UserController {

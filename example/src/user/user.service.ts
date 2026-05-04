@@ -1,4 +1,4 @@
-import { BadRequestError } from "@orbita-js/common"
+import { BadRequestError } from "@orbitajs/common"
 
 export class UserService {
     private readonly users = [{ id: 1, name: "OrbitaJS" }]
