@@ -1,42 +1,26 @@
-import { Request, Response, Middleware, MiddlewareWithoutUrl } from "@orbitajs/common"
+import { Request, Response, Middleware, MiddlewareWithoutUrl, HttpMethod } from "@orbitajs/common"
 
 export class MiddlewareRegistry {
-    private readonly middleware: Map<string, MiddlewareWithoutUrl[]> = new Map();
-
-    public getMiddlewares(url: string) {
-        const result: MiddlewareWithoutUrl[] = [];
-
-        const middlewares = this.middleware.get(url)
-        if (middlewares) {
-            result.push(...middlewares)
-        }
-
-        this.middleware.forEach((middleware, pattern) => {
-            if (!pattern.endsWith("/*")) return
-            if (url.startsWith(pattern.slice(0, -2))) {
-                result.push(...middleware)
-            }
-        })
-
-        return result
-    }
+    private readonly exactMiddlewares: Map<string, MiddlewareWithoutUrl[]> = new Map();
+    private readonly wildcardMiddlewares: Map<string, MiddlewareWithoutUrl[]> = new Map();
 
     public async runPipeline(req: Request, res: Response) {
-        const { url } = req;
-        if (!url) return false;
+        const url = this._normalizeUrl(req.url ?? "");
 
-        const globalMiddlewares = this.getMiddlewares("*");
-        if (globalMiddlewares) {
-            for (const middleware of globalMiddlewares) {
-                await middleware.handler(req, res);
-                if (res.headersSent) return false;
+        for (const [pattern, middlewares] of this.wildcardMiddlewares) {
+            const prefix = pattern.slice(0, -2)
+            if (url.startsWith(prefix + "/")) {
+                for (const middleware of middlewares) {
+                    await middleware.handler(req, res)
+                    if (res.headersSent) return false;
+                }
             }
         }
 
-        const middlewares = this.getMiddlewares(url);
+        const middlewares = this.exactMiddlewares.get(url)
         if (middlewares) {
             for (const middleware of middlewares) {
-                await middleware.handler(req, res);
+                await middleware.handler(req, res)
                 if (res.headersSent) return false;
             }
         }
@@ -46,14 +30,8 @@ export class MiddlewareRegistry {
 
     public add(m: MiddlewareRegistry | Middleware[] | Middleware) {
         if (m instanceof MiddlewareRegistry) {
-            for (const [url, newMiddlewares] of m.middleware) {
-                const middlewares = this.getMiddlewares(url);
-                if (middlewares) {
-                    middlewares.push(...newMiddlewares);
-                } else {
-                    this.middleware.set(url, newMiddlewares);
-                }
-            }
+            this._mergeMaps(m.exactMiddlewares)
+            this._mergeMaps(m.wildcardMiddlewares)
             return;
         }
 
@@ -65,29 +43,82 @@ export class MiddlewareRegistry {
         this._add(m);
     }
 
+    private _mergeMaps(map: Map<string, MiddlewareWithoutUrl[]>) {
+        for (const [url, middlewares] of map) {
+            if (url.endsWith("/*")) {
+                const list = this.wildcardMiddlewares.get(url)
+                if (!list) {
+                    this.wildcardMiddlewares.set(url, [...middlewares])
+                } else {
+                    list.push(...middlewares)
+                }
+            } else {
+                const list = this.exactMiddlewares.get(url)
+                if (!list) {
+                    this.exactMiddlewares.set(url, [...middlewares])
+                } else {
+                    list.push(...middlewares)
+                }
+            }
+        }
+    }
+
     private _add(middleware: Middleware) {
-        if (!middleware.url) {
-            middleware.url = "*";
-        }
-
-        if (!middleware.method) {
-            middleware.method = "*";
-        }
-
-        const { url } = middleware;
-
         const normalized = this._normalizeMiddleware(middleware);
-        const middlewares = this.getMiddlewares(url);
 
-        if (middlewares) {
-            middlewares.push(normalized);
+        if (normalized.url.endsWith("/*")) {
+            const list = this.wildcardMiddlewares.get(normalized.url)
+            if (!list) {
+                this.wildcardMiddlewares.set(normalized.url, [normalized.middleware])
+            } else {
+                list.push(normalized.middleware)
+            }
         } else {
-            this.middleware.set(url, [normalized]);
+            const list = this.exactMiddlewares.get(normalized.url)
+            if (!list) {
+                this.exactMiddlewares.set(normalized.url, [normalized.middleware])
+            } else {
+                list.push(normalized.middleware)
+            }
         }
     }
 
     private _normalizeMiddleware(middleware: Middleware) {
-        const { url, ...rest } = middleware;
-        return rest;
+        const url = this._normalizeUrl(middleware.url ?? "")
+        const method = this._normalizeMethod(middleware.method ?? "")
+
+        const { url: _, method: __, handler} = middleware;
+
+        return {
+            url,
+            middleware: {
+                method,
+                handler
+            }
+        }
+    }
+
+    private _normalizeUrl(url: string) {
+        if (!url || url === "*" || url === "/*") {
+            return "/*"
+        }
+
+        if (!url.startsWith("/")) {
+            return "/" + url
+        }
+
+        if (url.endsWith("/")) {
+            return url.slice(0, -1)
+        }
+
+        return url
+    }
+
+    private _normalizeMethod(method: string) {
+        if (!method || method === "*" || method === "") {
+            return "*" as HttpMethod
+        }
+
+        return method as HttpMethod
     }
 }
