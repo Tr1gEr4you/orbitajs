@@ -1,7 +1,7 @@
 import { Response } from "./response.types";
 import { Request } from "./request.types";
 
-export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
+export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "OPTIONS";
 
 export type Handler = (req: Request, res: Response) => Promise<void> | void | Promise<any> | any;
 
