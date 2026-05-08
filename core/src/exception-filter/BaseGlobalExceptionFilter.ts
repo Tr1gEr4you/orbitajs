@@ -12,6 +12,8 @@ export class BaseGlobalExceptionFilter implements ExceptionFilter {
             });
         }
 
+        console.log(exception)
+
         res.status(statusCode).json({
             statusCode,
             message: HttpMessages.INTERNAL_SERVER_ERROR,
