@@ -1,7 +1,10 @@
 import { Request, Response, Route, RouteWithoutMethod, RouteWithoutUrl, NotFoundError } from "@orbitajs/common"
+import { UrlParser } from "./UrlParser";
 
 export class Router {
     private readonly routes: Map<string, RouteWithoutUrl[]> = new Map();
+
+    private readonly urlParser = new UrlParser()
 
     public getRoutes(url: string) {
         return this.routes.get(url);
@@ -27,7 +30,12 @@ export class Router {
         const { method, url } = req;
         if (!method || !url) return;
 
-        const routes = this.getRoutes(url);
+        const { path, query } = this.urlParser.parse(url)
+        if (query) {
+            req.query = query
+        }
+
+        const routes = this.getRoutes(path);
         if (!routes) throw new NotFoundError();
 
         const route = routes.find((route) => route.method === method);
